@@ -1,0 +1,451 @@
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Archivo+Black|Roboto|Share+Tech+Mono" rel="stylesheet">
+
+    <style>
+      /* Theme colors */
+      /* rgb(255,72,196) */
+      /* rgb(43,209,252) */
+      /* rgb(243,234,95) */
+      /* rgb(192,77,249) */
+      /* rgb(255,63,63) */
+      body {
+        color: rgb(43,209,252);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0;
+        font-family: 'Roboto', sans-serif;
+        background: linear-gradient(rgb(255,72,196), rgb(192,77,249));
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .cabinet {
+        position: absolute;
+        /* left: 0;
+        right: 3rem; */
+        /* top: 0;
+        bottom: 0; */
+        height: 100%;
+        width: auto;
+        pointer-events: none;
+        overflow: visible;
+      }
+
+      .cabinet svg {
+        height: 100%;
+        width: 100%;
+        overflow: visible;
+      }
+
+      .page-title {
+        width: 100%;
+        font-size: 4vh;
+        text-align: center;
+        padding: 0.5rem;
+        border-bottom: 0.1rem solid rgba(43,209,252, 0.8);
+        margin-bottom: 1rem;
+        font-family: 'Archivo Black', sans-serif;
+      }
+
+      .game-list {
+        font-size: 2vh;
+        text-shadow: 0.2rem 0.2rem 0.4rem black;
+        min-width: calc(100% - 20vw);
+      }
+
+      .game {
+        margin-bottom: 0.5rem;
+      }
+
+      .game-title {
+        font-size: 3vh;
+        width: 100%;
+        display: block;
+        cursor: pointer;
+      }
+
+      .game-title:after {
+        content: ' ';
+        border-bottom: 1px solid;
+        height: 1rem;
+        width: 100%;
+        display: block;
+        position: relative;
+        top: -1rem;
+        pointer-events: none;
+      }
+
+      .game-title:hover {
+        color: rgb(243,234,95);
+      }
+
+      .score-list-toggle {
+        display: none;
+      }
+
+      .score-list {
+
+      }
+
+      .score-list-toggle~.score-list {
+        display: none;
+      }
+
+      .score-list-toggle:checked~.score-list {
+        display: block;
+      }
+
+      .score-item {
+        display: flex;
+      }
+
+      .player {
+        margin-right: 0.4rem;
+      }
+
+      .score-spacer {
+        flex: 1;
+        border-bottom: 0.25vh dotted;
+        height: 1.7vh;
+        min-width: 2rem;
+        box-shadow: 0rem 0.2rem 0rem rgba(0, 0, 0, 0.3);
+      }
+
+      .highscore {
+        margin-left: 0.4rem;
+        font-family: 'Share Tech Mono', monospace;
+      }
+
+      .loader {
+        position: absolute;
+        top: 4vh;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        overflow: hidden;
+      }
+
+      .loader-dash {
+        position: relative;
+        border-radius: 5rem;
+        height: 0.3vh;
+        margin: 3rem 0;
+        background-color: rgb(43,209,252);
+        animation-name: loader-anim;
+        animation-iteration-count: infinite;
+        animation-timing-function: ease-in-out;
+      }
+
+      @keyframes loader-anim {
+        0% {
+          left: -20%;
+          width: 0rem;
+          opacity: 0;
+        }
+
+        35% {
+          width: 3rem;
+          opacity: 0.5;
+        }
+
+        50% {
+          width: 8rem;
+          opacity: 1;
+        }
+
+        55% {
+          width: 3rem;
+          opacity: 0.5;
+        }
+
+        100% {
+          left: 120%;
+          width: 0rem;
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cabinet">
+      <svg xmlns="http://www.w3.org/2000/svg" version="1.0" viewBox="0 0 316 557" preserveAspectRatio="xMidYMid slice">
+        <g transform="translate(0.000000,557.000000) scale(0.100000,-0.100000)" fill="rgba(243,234,95, 0.2)" stroke="none">
+          <path d="M1310 5354 c-195 -63 -528 -169 -740 -236 -212 -66 -389 -125 -394 -129 -4 -4 0 -156 10 -338 l18 -332 210 -105 c116 -58 214 -109 217 -112 4 -4 9 -269 12 -590 l6 -583 -300 -149 -299 -150 0 -120 0 -120 115 -76 114 -75 1 -747 c0 -411 3 -806 7 -879 l6 -131 56 -15 c31 -8 368 -99 750 -201 382 -102 703 -186 714 -186 12 0 145 27 297 61 151 34 325 72 385 84 61 13 182 40 270 60 88 19 203 45 255 56 52 12 99 25 104 29 5 5 2 767 -6 1802 l-14 1793 -73 155 c-39 85 -99 214 -132 285 -34 72 -102 220 -153 330 l-91 200 -485 267 c-267 147 -489 266 -495 266 -5 0 -170 -51 -365 -114z m370 -295 c11 -200 17 -365 15 -367 -2 -3 -273 -67 -602 -143 -787 -183 -847 -197 -853 -192 -4 4 -40 606 -36 609 4 4 1452 460 1454 458 2 -1 12 -166 22 -365z m545 73 l400 -219 30 -60 c17 -32 52 -108 79 -168 27 -61 66 -146 87 -190 21 -44 85 -183 143 -309 l105 -229 10 -1226 c6 -674 13 -1477 17 -1783 l6 -557 -24 -5 c-12 -3 -63 -14 -113 -25 -49 -11 -250 -55 -445 -97 -195 -42 -430 -93 -521 -113 l-166 -37 -7 470 c-3 259 -6 725 -7 1036 0 311 -3 570 -7 576 -4 6 -58 48 -120 94 -62 46 -115 93 -118 105 -3 11 -4 67 -2 124 l3 104 280 156 c154 86 297 166 317 178 l37 22 -5 273 c-2 150 -7 474 -10 719 l-6 447 -225 132 c-124 73 -226 138 -228 144 -4 12 -35 627 -35 688 l0 38 63 -35 c34 -19 242 -133 462 -253z m-304 -597 c137 -81 197 -121 184 -124 -11 -2 -342 -65 -735 -141 l-715 -138 -180 90 c-99 49 -183 93 -188 97 -6 6 1407 341 1424 337 3 0 97 -55 210 -121z m244 -841 c4 -377 5 -687 3 -689 -3 -3 -882 -44 -1314 -61 l-171 -7 -7 577 c-4 318 -6 580 -3 582 5 6 88 22 897 179 294 56 547 103 561 104 l26 1 8 -686z m-60 -733 c-6 -5 -134 -78 -285 -163 l-275 -153 -700 -2 -700 -3 264 130 265 130 670 30 c617 27 734 33 761 38 6 1 6 -1 0 -7z m-565 -461 l0 -122 -147 6 c-82 4 -245 8 -363 11 -118 2 -357 7 -530 10 -173 4 -337 8 -365 9 l-50 3 -3 92 -3 91 83 1 c46 1 319 5 608 8 289 3 580 8 648 9 l122 4 0 -122z m-630 -135 c135 -3 335 -8 445 -11 l200 -6 95 -70 95 -70 -135 6 c-136 6 -492 20 -780 31 -85 3 -239 10 -343 15 l-187 8 -68 43 c-123 77 -138 71 163 65 149 -4 380 -8 515 -11z m-105 -150 c259 -10 413 -16 470 -20 33 -2 152 -7 265 -10 113 -4 213 -9 222 -11 20 -6 21 -46 26 -1283 2 -415 5 -758 8 -763 3 -4 -1 -8 -8 -8 -7 0 -319 82 -693 181 -374 100 -702 187 -730 193 l-50 11 -3 864 -3 864 188 -7 c103 -4 242 -9 308 -11z"/>
+        </g>
+      </svg>
+    </div>
+    <span class="page-title">
+      WELTERCADE
+    </span>
+  </body>
+  <script>
+    // TODO: start test data
+    var testData = [
+      {
+        title: 'Tapper',
+        highScores: [
+          {
+            score: 654321,
+            player: 'CAP',
+          },
+          {
+            score: 54321,
+            player: 'CAP',
+          },
+          {
+            score: 4321,
+            player: 'CAP',
+          },
+          {
+            score: 321,
+            player: 'CAP',
+          },
+          {
+            score: 21,
+            player: 'PAC',
+          },
+          {
+            score: 20,
+            player: 'CAP',
+          },
+          {
+            score: 19,
+            player: 'CAP',
+          },
+          {
+            score: 14,
+            player: 'CAP',
+          },
+          {
+            score: 2,
+            player: 'CAP',
+          },
+          {
+            score: 1,
+            player: 'CAP',
+          },
+        ],
+      },
+      {
+        title: 'Donkey Kong',
+        highScores: [
+          {
+            score: 111111,
+            player: 'CAP',
+          },
+          {
+            score: 54321,
+            player: 'CAP',
+          },
+          {
+            score: 4321,
+            player: 'CAP',
+          },
+          {
+            score: 321,
+            player: 'CAP',
+          },
+          {
+            score: 21,
+            player: 'PAC',
+          },
+          {
+            score: 20,
+            player: 'CAP',
+          },
+          {
+            score: 19,
+            player: 'CAP',
+          },
+          {
+            score: 14,
+            player: 'CAP',
+          },
+          {
+            score: 2,
+            player: 'CAP',
+          },
+          {
+            score: 1,
+            player: 'CAP',
+          },
+        ],
+      },
+      {
+        title: 'Jump Man',
+        highScores: [
+          {
+            score: 111111,
+            player: 'CAP',
+          },
+          {
+            score: 54321,
+            player: 'CAP',
+          },
+          {
+            score: 4321,
+            player: 'CAP',
+          },
+          {
+            score: 321,
+            player: 'CAP',
+          },
+          {
+            score: 21,
+            player: 'PAC',
+          },
+          {
+            score: 20,
+            player: 'CAP',
+          },
+          {
+            score: 19,
+            player: 'CAP',
+          },
+          {
+            score: 14,
+            player: 'CAP',
+          },
+          {
+            score: 2,
+            player: 'CAP',
+          },
+          {
+            score: 1,
+            player: 'CAP',
+          },
+        ],
+      },
+    ];
+    var testRequest = function(callback) {
+      setTimeout(function() {
+        callback(testData);
+      }, 3000);
+    }
+    // TODO: end test data
+
+    var removeList = function() {
+      var existingList = document.getElementById('highscore-list');
+
+      if (existingList) {
+        document.body.removeChild(existingList);
+      }
+    }
+
+    var buildList = function(gamesData) {
+      var listEl = document.createElement('ul');
+      var counter = 0;
+
+      listEl.classList.add('game-list');
+
+      gamesData.forEach(function(game) {
+        var gameEl = document.createElement('li');
+        var highScoreListEl = document.createElement('ul');
+        var gameTitleEl = document.createElement('label');
+        var gameToggleEl = document.createElement('input');
+        var gameTitleId = 'game-title-' + counter;
+
+        game.highScores.forEach(function(highScore) {
+          var highScoreEl = document.createElement('li');
+          var playerEl = document.createElement('span');
+          var spacerEl = document.createElement('div');
+          var scoreEl = document.createElement('span');
+
+          playerEl.innerText = highScore.player;
+          scoreEl.innerText = highScore.score;
+          playerEl.classList.add('player');
+          highScoreEl.append(playerEl);
+          spacerEl.classList.add('score-spacer');
+          highScoreEl.append(spacerEl);
+          scoreEl.classList.add('highscore');
+          highScoreEl.append(scoreEl);
+          highScoreEl.classList.add('score-item');
+          highScoreListEl.append(highScoreEl);
+        });
+
+        gameToggleEl.setAttribute('type', 'checkbox');
+        gameToggleEl.setAttribute('id', gameTitleId);
+        gameToggleEl.classList.add('score-list-toggle');
+        gameEl.append(gameToggleEl);
+        gameTitleEl.append(game.title);
+        gameTitleEl.setAttribute('for', gameTitleId);
+        gameTitleEl.classList.add('game-title');
+        gameEl.append(gameTitleEl);
+        highScoreListEl.classList.add('score-list');
+        gameEl.append(highScoreListEl);
+        gameEl.classList.add('game');
+        listEl.append(gameEl);
+        counter++;
+      });
+
+      listEl.setAttribute('id', 'highscore-list');
+      removeList();
+      document.body.append(listEl);
+    }
+
+    var removeLoader = function() {
+      var loader = document.getElementById('loader');
+
+      if (loader) {
+        document.body.removeChild(loader);
+      }
+    }
+
+    var addLoader = function() {
+      var loaderEl = document.createElement('div');
+      var windowHeight = document.body.getBoundingClientRect().height;
+      var windowFontSize = window.getComputedStyle(document.body).fontSize;
+
+      try {
+        windowFontSize = parseFloat(windowFontSize.replace('px', ''), 10);
+      } catch (e) {
+        windowFontSize = 16;
+      }
+
+      for (var i = 0; i < windowHeight / windowFontSize * 2; i++) {
+        var dashEl = document.createElement('div');
+
+        dashEl.classList.add('loader-dash');
+        dashEl.style.setProperty('animation-duration', (Math.random() * (2 - 0.75) + 0.75) + 's');
+        loaderEl.append(dashEl);
+      }
+
+      loaderEl.setAttribute('id', 'loader');
+      loaderEl.classList.add('loader');
+      document.body.append(loaderEl);
+    }
+
+    var konami = function konami(e) {
+      if (konami.state == null) {
+        konami.state = 0;
+        konami.code = [38,38,40,40,37,39,37,39,66,65,13];
+      }
+
+      if (e.keyCode === konami.code[konami.state]) {
+        konami.state++;
+      } else {
+        konami.state = 0;
+      }
+
+      if (konami.state === konami.code.length) {
+        konami.state = 0;
+        console.log('carl'); // TODO: something
+      }
+    }
+
+    window.addEventListener('keydown', konami);
+    addLoader();
+    testRequest(function(data) {
+      removeLoader();
+      buildList(data);
+    });
+  </script>
+</html>
