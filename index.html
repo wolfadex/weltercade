@@ -172,6 +172,26 @@
           opacity: 0;
         }
       }
+
+      .hidden {
+        display: none;
+      }
+
+      .konami {
+        position: absolute;
+        top: 0;
+        bottom: 10rem;
+        left: 0;
+        right: 10rem;
+        background-color: red;
+      }
+
+      .konami svg {
+        height: 100%;
+        width: 100%;
+        overflow: visible;
+        position: absolute;
+      }
     </style>
   </head>
   <body>
@@ -185,10 +205,16 @@
     <span class="page-title">
       WELTERCADE
     </span>
+    <ul id="highscore-list" class="game-list hidden">
+    </ul>
+    <div id="loader" class="loader hidden">
+    </div>
+    <div id="konami" class="konami hidden">
+    </div>
   </body>
   <script>
     // TODO: start test data
-    var testData = [
+    const testData = [
       {
         title: 'Tapper',
         highScores: [
@@ -325,39 +351,46 @@
         ],
       },
     ];
-    var testRequest = function(callback) {
+    const gameListEl = document.getElementById('highscore-list');
+    const loaderEl = document.getElementById('loader');
+    const konamiEl = document.getElementById('konami');
+    let konamiMode = false;
+    const testRequest = function(callback) {
       setTimeout(function() {
         callback(testData);
       }, 3000);
     }
     // TODO: end test data
 
-    var removeList = function() {
-      var existingList = document.getElementById('highscore-list');
-
-      if (existingList) {
-        document.body.removeChild(existingList);
+    const hideEl = function(el) {
+      el.classList.add('hidden');
+    }
+    const showEl = function(el) {
+      el.classList.remove('hidden');
+    }
+    const removeChildren = function(el) {
+      while (el.lastChild) {
+        el.removeChild(el.lastChild);
       }
     }
 
-    var buildList = function(gamesData) {
-      var listEl = document.createElement('ul');
-      var counter = 0;
+    const buildList = function(gamesData) {
+      let counter = 0;
 
-      listEl.classList.add('game-list');
+      removeChildren(gameListEl);
 
       gamesData.forEach(function(game) {
-        var gameEl = document.createElement('li');
-        var highScoreListEl = document.createElement('ul');
-        var gameTitleEl = document.createElement('label');
-        var gameToggleEl = document.createElement('input');
-        var gameTitleId = 'game-title-' + counter;
+        const gameEl = document.createElement('li');
+        const highScoreListEl = document.createElement('ul');
+        const gameTitleEl = document.createElement('label');
+        const gameToggleEl = document.createElement('input');
+        const gameTitleId = 'game-title-' + counter;
 
         game.highScores.forEach(function(highScore) {
-          var highScoreEl = document.createElement('li');
-          var playerEl = document.createElement('span');
-          var spacerEl = document.createElement('div');
-          var scoreEl = document.createElement('span');
+          const highScoreEl = document.createElement('li');
+          const playerEl = document.createElement('span');
+          const spacerEl = document.createElement('div');
+          const scoreEl = document.createElement('span');
 
           playerEl.innerText = highScore.player;
           scoreEl.innerText = highScore.score;
@@ -382,27 +415,16 @@
         highScoreListEl.classList.add('score-list');
         gameEl.append(highScoreListEl);
         gameEl.classList.add('game');
-        listEl.append(gameEl);
+        gameListEl.append(gameEl);
         counter++;
       });
-
-      listEl.setAttribute('id', 'highscore-list');
-      removeList();
-      document.body.append(listEl);
     }
 
-    var removeLoader = function() {
-      var loader = document.getElementById('loader');
+    const addLoader = function() {
+      removeChildren(loaderEl);
 
-      if (loader) {
-        document.body.removeChild(loader);
-      }
-    }
-
-    var addLoader = function() {
-      var loaderEl = document.createElement('div');
-      var windowHeight = document.body.getBoundingClientRect().height;
-      var windowFontSize = window.getComputedStyle(document.body).fontSize;
+      const windowHeight = document.body.getBoundingClientRect().height;
+      let windowFontSize = window.getComputedStyle(document.body).fontSize;
 
       try {
         windowFontSize = parseFloat(windowFontSize.replace('px', ''), 10);
@@ -410,20 +432,60 @@
         windowFontSize = 16;
       }
 
-      for (var i = 0; i < windowHeight / windowFontSize * 2; i++) {
-        var dashEl = document.createElement('div');
+      for (let i = 0; i < windowHeight / windowFontSize * 2; i++) {
+        const dashEl = document.createElement('div');
 
         dashEl.classList.add('loader-dash');
         dashEl.style.setProperty('animation-duration', (Math.random() * (2 - 0.75) + 0.75) + 's');
         loaderEl.append(dashEl);
       }
-
-      loaderEl.setAttribute('id', 'loader');
-      loaderEl.classList.add('loader');
-      document.body.append(loaderEl);
     }
 
-    var konami = function konami(e) {
+    const getAndBuildList = function() {
+      addLoader();
+      showEl(loaderEl);
+      testRequest(function(data) {
+        hideEl(loaderEl);
+        buildList(data);
+
+        if (!konamiMode) {
+          showEl(gameListEl);
+        }
+      });
+    }
+
+    const stopKonamiMode = function() {
+      konamiMode = false;
+      hideEl(konamiEl);
+      removeChildren(konamiEl);
+      getAndBuildList();
+    }
+
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const startKonamiMode = function() {
+      konamiMode = true;
+      hideEl(gameListEl);
+      hideEl(loaderEl);
+      removeChildren(konamiEl);
+
+      const boardEl = document.createElementNS(svgNS, 'svg');
+      const playerEl = document.createElementNS(svgNS, 'rect');
+
+      playerEl.setAttributeNS(null, 'x', '50');
+      playerEl.setAttributeNS(null, 'y', '50');
+      playerEl.setAttributeNS(null, 'width', '50');
+      playerEl.setAttributeNS(null, 'height', '50');
+      playerEl.setAttributeNS(null, 'fill', 'black');
+      boardEl.appendChild(playerEl);
+      boardEl.setAttribute('xmlns', svgNS);
+      boardEl.setAttribute('version', '1.0');
+      boardEl.setAttribute('viewBox', '0 0 800 600');
+      boardEl.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+      konamiEl.appendChild(boardEl);
+      showEl(konamiEl);
+    }
+
+    const konami = function konami(e) {
       if (konami.state == null) {
         konami.state = 0;
         konami.code = [38,38,40,40,37,39,37,39,66,65,13];
@@ -435,17 +497,17 @@
         konami.state = 0;
       }
 
+      if ((e.keyCode === 27 || e.keyCode === 81) && konamiMode) {
+        stopKonamiMode();
+      }
+
       if (konami.state === konami.code.length) {
         konami.state = 0;
-        console.log('carl'); // TODO: something
+        startKonamiMode();
       }
     }
 
     window.addEventListener('keydown', konami);
-    addLoader();
-    testRequest(function(data) {
-      removeLoader();
-      buildList(data);
-    });
+    getAndBuildList();
   </script>
 </html>
